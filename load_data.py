@@ -14,7 +14,7 @@ def load_X_images(file):
         # Convert bytes to float32 in the range [0,255]
         return data/np.float32(256)
 
-#print load_X_images('/Users/sunyambagga/GitHub/DigitRecogniser/train-images-idx3-ubyte.gz')
+#print load_X_images('/Users/sunyambagga/Kaggle/Digit_Recognizer/train-images-idx3-ubyte.gz')
 
 def load_Y_labels(file):
 
@@ -23,4 +23,4 @@ def load_Y_labels(file):
 
     return data
 
-#print load_Y_labels('/Users/sunyambagga/GitHub/DigitRecogniser/train-labels-idx1-ubyte.gz')
+#print load_Y_labels('/Users/sunyambagga/Kaggle/Digit_Recognizer/train-labels-idx1-ubyte.gz')
