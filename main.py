@@ -32,3 +32,26 @@ def creat_neural_network(input_var=None):
     return output_layer
 
 #creat_neural_network()
+input_var = T.tensor4('input')
+target_var = T.ivector('target')
+
+nn = creat_neural_network(input_var)
+
+# Error Function
+prediction = lasagne.layers.get_output(nn)
+loss = lasagne.objectives.categorical_crossentropy(prediction, target_var)
+loss = loss.mean()
+
+# Update weights
+parameters = lasagne.layers.get_all_params(nn, trainable=True)
+updates = lasagne.updates.nesterov_momentum(loss, parameters, learning_rate=0.15, momentum=0.9)
+
+# Creating a theano function for a single training step
+train_fn = theano.function([input_var, target_var], loss, updates=updates)
+
+# TRAINING THE NEURAL NET
+num_iterations = 200
+
+for i in range(num_iterations):
+    err = train_fn(x_train, y_train)
+    print "Current iteration" + str(i)
