@@ -50,8 +50,48 @@ updates = lasagne.updates.nesterov_momentum(loss, parameters, learning_rate=0.15
 train_fn = theano.function([input_var, target_var], loss, updates=updates)
 
 # TRAINING THE NEURAL NET
-num_iterations = 200
+# Note: I trained it for 200 epochs; can take a few hours
+num_iterations = 10
 
 for i in range(num_iterations):
     err = train_fn(x_train, y_train)
     print "Current iteration" + str(i)
+
+
+# Making predictions
+test_prediction = lasagne.layers.get_output(nn, deterministic=True)
+
+val_fn = theano.function([input_var], T.argmax(test_prediction, axis=1)[0])
+
+# Download Kaggle Test Data: "test_MNIST.csv"
+import csv
+import numpy as np
+
+X_test = []
+data = []
+with open("/Users/sunyambagga/Kaggle/Digit_Recognizer/test_MNIST.csv") as file:
+    lineReader = csv.reader(file, delimiter=',', quotechar="\"")
+    lineNum = 1
+    for row in lineReader:
+        if lineNum == 1:
+            lineNum = 9
+        else:
+            data.append(row)
+
+data = np.array(data, dtype='f')
+data = data/np.float32(256)
+X_test = data.reshape(-1, 1, 28, 28)
+
+
+# Writing results to csv
+for i in range(len(X_test)):
+    with open('results.csv', 'a') as f:
+        # Just to see progress
+        if i%1000==0:
+            print "Writing File", i
+        
+        f.write(str(i+1) + ',' + '"' + str(val_fn([X_test[i]])) + '"' + '\n')
+
+# For Kaggle Submission, include "ImageId","Label" as the first row
+
+# NOTE: With the current results.csv, you will get a 83% accuracy; Try out different parameters, specially num_iterations=200 to get more 99+% accuracy
